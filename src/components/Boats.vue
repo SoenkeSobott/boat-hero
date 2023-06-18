@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div class="container">
     <!-- Boat creation form -->
-    <form @submit.prevent="addBoat">
+    <form @submit.prevent="addBoat" class="boat-form">
+      <h2>Add a New Boat</h2>
       <label for="name">Name</label>
       <input id="name" v-model="newBoat.name" required />
 
@@ -12,7 +13,11 @@
     </form>
 
     <!-- Boat editing form -->
-    <form v-if="selectedBoat" @submit.prevent="updateBoat">
+    <form v-if="selectedBoat" @submit.prevent="updateBoat" class="boat-form">
+      <h2>
+        Edit Selected Boat
+        <button type="button" @click="cancelUpdate" class="close-btn">X</button>
+      </h2>
       <label for="edit-name">Name</label>
       <input id="edit-name" v-model="selectedBoat.name" required />
 
@@ -146,10 +151,57 @@ export default {
       deleteBoat,
     };
   },
+  methods: {
+    cancelUpdate() {
+      this.selectedBoat = null;
+    },
+  },
 };
 </script>
 
-<style>
+<style scoped>
+.container {
+  width: 80%;
+  margin: auto;
+  padding-top: 20px;
+}
+
+.boat-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.boat-form h2 {
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  float: right;
+  cursor: pointer;
+}
+
+.boat-form input {
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.boat-form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -157,8 +209,25 @@ export default {
 
 .table th,
 .table td {
-  border: 1px solid #ccc;
   padding: 10px;
-  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #007bff;
+  color: white;
+}
+
+.table td {
+  background-color: #f9f9f9;
+}
+
+.table button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>
