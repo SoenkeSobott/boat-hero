@@ -1,16 +1,7 @@
 <template>
   <div class="container">
     <!-- Boat creation form -->
-    <form @submit.prevent="addBoat" class="boat-form">
-      <h2>Add a New Boat</h2>
-      <label for="name">Name</label>
-      <input id="name" v-model="newBoat.name" required />
-
-      <label for="description">Description</label>
-      <input id="description" v-model="newBoat.description" required />
-
-      <button type="submit">Add Boat</button>
-    </form>
+    <add-boat @boat-added="fetchBoats()"></add-boat>
 
     <!-- Boat listing -->
     <table class="table">
@@ -37,94 +28,68 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import AddBoat from "./AddBoat.vue";
+
+// Create an axios instance with common options
+const api = axios.create({
+  baseURL: "https://boat-service.azurewebsites.net/api",
+  headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+});
 
 export default {
+  components: {
+    AddBoat,
+  },
   setup() {
     const router = useRouter();
     const boats = ref([]);
-    const newBoat = reactive({ name: "", description: "" });
-    const selectedBoat = ref(null);
 
-    onMounted(async () => {
-      const jwt = localStorage.getItem("jwt");
-      if (jwt) {
-        try {
-          const response = await axios.get(
-            "https://boat-service.azurewebsites.net/api/boats",
-            {
-              headers: { Authorization: `Bearer ${jwt}` },
-            }
-          );
-          boats.value = response.data;
-        } catch (err) {
-          console.error(err);
-        }
-      } else {
-        router.push("/");
-      }
-    });
-
-    const addBoat = async () => {
-      const jwt = localStorage.getItem("jwt");
-      if (jwt) {
-        try {
-          const response = await axios.post(
-            "https://boat-service.azurewebsites.net/api/boats",
-            newBoat,
-            {
-              headers: { Authorization: `Bearer ${jwt}` },
-            }
-          );
-          boats.value.push(response.data); // Add the newly created boat to the list
-          newBoat.name = ""; // Clear the form fields
-          newBoat.description = "";
-        } catch (err) {
-          console.error(err);
-        }
+    // Extract the fetchBoats function
+    const fetchBoats = async () => {
+      try {
+        const response = await api.get("/boats");
+        boats.value = response.data;
+      } catch (err) {
+        handleError(err);
       }
     };
+
+    // Call fetchBoats in onMounted
+    onMounted(fetchBoats);
 
     const goToDetails = (id) => {
       router.push({ name: "BoatDetails", params: { id: id } });
     };
 
     const deleteBoat = async (boat) => {
-      const jwt = localStorage.getItem("jwt");
-      if (jwt) {
-        try {
-          await axios.delete(
-            `https://boat-service.azurewebsites.net/api/boats/${boat.id}`,
-            {
-              headers: { Authorization: `Bearer ${jwt}` },
-            }
-          );
-          const index = boats.value.indexOf(boat);
-          boats.value.splice(index, 1);
-        } catch (err) {
-          console.error(err);
-        }
+      try {
+        await api.delete(`/boats/${boat.id}`);
+        const index = boats.value.indexOf(boat);
+        boats.value.splice(index, 1);
+      } catch (err) {
+        handleError(err);
       }
+    };
+
+    // Create a common error handler
+    const handleError = (err) => {
+      console.error(err);
+      router.push("/");
     };
 
     return {
       boats,
-      newBoat,
-      selectedBoat,
-      addBoat,
+      fetchBoats,
       goToDetails,
       deleteBoat,
     };
   },
-  methods: {
-    cancelUpdate() {
-      this.selectedBoat = null;
-    },
-  },
 };
 </script>
+
 
 <style scoped>
 .container {

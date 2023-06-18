@@ -47,6 +47,7 @@ export default {
           boat.value = response.data;
         } catch (err) {
           console.error(err);
+          router.push("/");
         }
       } else {
         router.push("/");
@@ -66,7 +67,10 @@ export default {
           );
         } catch (err) {
           console.error(err);
+          router.push("/");
         }
+      } else {
+        router.push("/");
       }
     };
 
