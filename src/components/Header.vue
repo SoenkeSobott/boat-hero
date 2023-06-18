@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <h1 class="title">Boat App</h1>
+    <h1 class="title">Boat Hero</h1>
     <div class="auth-section">
       <button v-if="!isAuthenticated" @click="goToLogin" class="auth-button">
         Login
