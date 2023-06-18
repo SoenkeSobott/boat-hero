@@ -12,25 +12,6 @@
       <button type="submit">Add Boat</button>
     </form>
 
-    <!-- Boat editing form -->
-    <form v-if="selectedBoat" @submit.prevent="updateBoat" class="boat-form">
-      <h2>
-        Edit Selected Boat
-        <button type="button" @click="cancelUpdate" class="close-btn">X</button>
-      </h2>
-      <label for="edit-name">Name</label>
-      <input id="edit-name" v-model="selectedBoat.name" required />
-
-      <label for="edit-description">Description</label>
-      <input
-        id="edit-description"
-        v-model="selectedBoat.description"
-        required
-      />
-
-      <button type="submit">Update Boat</button>
-    </form>
-
     <!-- Boat listing -->
     <table class="table">
       <thead>
@@ -42,7 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="boat in boats" :key="boat.id" @click="selectedBoat = boat">
+        <tr v-for="boat in boats" :key="boat.id" @click="goToDetails(boat.id)">
           <td>{{ boat.id }}</td>
           <td>{{ boat.name }}</td>
           <td>{{ boat.description }}</td>
@@ -106,22 +87,8 @@ export default {
       }
     };
 
-    const updateBoat = async () => {
-      const jwt = localStorage.getItem("jwt");
-      if (jwt && selectedBoat.value) {
-        try {
-          await axios.put(
-            `https://boat-service.azurewebsites.net/api/boats/${selectedBoat.value.id}`,
-            selectedBoat.value,
-            {
-              headers: { Authorization: `Bearer ${jwt}` },
-            }
-          );
-          selectedBoat.value = null;
-        } catch (err) {
-          console.error(err);
-        }
-      }
+    const goToDetails = (id) => {
+      router.push({ name: "BoatDetails", params: { id: id } });
     };
 
     const deleteBoat = async (boat) => {
@@ -147,7 +114,7 @@ export default {
       newBoat,
       selectedBoat,
       addBoat,
-      updateBoat,
+      goToDetails,
       deleteBoat,
     };
   },
