@@ -1,22 +1,31 @@
 <template>
   <div>
-    <h2>Boats</h2>
-    <ul>
-      <li v-for="boat in boats" :key="boat.id">{{ boat.name }}</li>
-    </ul>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="boat in boats" :key="boat.id">
+          <td>{{ boat.id }}</td>
+          <td>{{ boat.name }}</td>
+          <td>{{ boat.description }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
 
 export default {
-  name: "BoatsPage",
   setup() {
     const boats = ref([]);
-    const router = useRouter();
 
     onMounted(async () => {
       const jwt = localStorage.getItem("jwt");
@@ -25,22 +34,33 @@ export default {
           const response = await axios.get(
             "https://boat-service.azurewebsites.net/api/boats",
             {
-              headers: {
-                Authorization: `Bearer ${jwt}`,
-              },
+              headers: { Authorization: `Bearer ${jwt}` },
             }
           );
           boats.value = response.data;
-        } catch (error) {
-          console.log(error);
+        } catch (err) {
+          console.error(err);
         }
-      } else {
-        // Handle case when there is no JWT
-        router.push("/");
       }
     });
 
-    return { boats };
+    return {
+      boats,
+    };
   },
 };
 </script>
+
+<style>
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+</style>
