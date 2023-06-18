@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Boat creation form -->
     <form @submit.prevent="addBoat">
       <label for="name">Name</label>
       <input id="name" v-model="newBoat.name" required />
@@ -10,12 +11,14 @@
       <button type="submit">Add Boat</button>
     </form>
 
+    <!-- Boat listing -->
     <table class="table">
       <thead>
         <tr>
           <th>ID</th>
           <th>Name</th>
           <th>Description</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +26,9 @@
           <td>{{ boat.id }}</td>
           <td>{{ boat.name }}</td>
           <td>{{ boat.description }}</td>
+          <td>
+            <button @click="deleteBoat(boat)">Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -32,9 +38,11 @@
 <script>
 import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
+    const router = useRouter();
     const boats = ref([]);
     const newBoat = reactive({ name: "", description: "" });
 
@@ -72,13 +80,34 @@ export default {
         } catch (err) {
           console.error(err);
         }
+      } else {
+        router.push("/");
       }
     });
+
+    const deleteBoat = async (boat) => {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        try {
+          await axios.delete(
+            `https://boat-service.azurewebsites.net/api/boats/${boat.id}`,
+            {
+              headers: { Authorization: `Bearer ${jwt}` },
+            }
+          );
+          const index = boats.value.indexOf(boat);
+          boats.value.splice(index, 1);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
 
     return {
       boats,
       newBoat,
       addBoat,
+      deleteBoat,
     };
   },
 };
