@@ -10,11 +10,13 @@
 <script>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 export default {
   name: "BoatsPage",
   setup() {
     const boats = ref([]);
+    const router = useRouter();
 
     onMounted(async () => {
       const jwt = localStorage.getItem("jwt");

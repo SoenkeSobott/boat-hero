@@ -1,19 +1,20 @@
-<script setup>
-import Login from "./components/Login.vue";
-</script>
-
 <template>
-  <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="./assets/logo.svg"
-      width="125"
-      height="125"
-    />
-  </header>
-  <router-view></router-view>
+  <div id="app">
+    <app-header></app-header>
+    <router-view />
+  </div>
 </template>
+
+<script>
+import Header from "./components/Header.vue";
+
+export default {
+  name: "App",
+  components: {
+    "app-header": Header,
+  },
+};
+</script>
 
 <style scoped>
 header {
