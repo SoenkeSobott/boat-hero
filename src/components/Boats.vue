@@ -1,5 +1,15 @@
 <template>
   <div>
+    <form @submit.prevent="addBoat">
+      <label for="name">Name</label>
+      <input id="name" v-model="newBoat.name" required />
+
+      <label for="description">Description</label>
+      <input id="description" v-model="newBoat.description" required />
+
+      <button type="submit">Add Boat</button>
+    </form>
+
     <table class="table">
       <thead>
         <tr>
@@ -20,12 +30,33 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
 
 export default {
   setup() {
     const boats = ref([]);
+    const newBoat = reactive({ name: "", description: "" });
+
+    const addBoat = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        try {
+          const response = await axios.post(
+            "https://boat-service.azurewebsites.net/api/boats",
+            newBoat,
+            {
+              headers: { Authorization: `Bearer ${jwt}` },
+            }
+          );
+          boats.value.push(response.data); // Add the newly created boat to the list
+          newBoat.name = ""; // Clear the form fields
+          newBoat.description = "";
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
 
     onMounted(async () => {
       const jwt = localStorage.getItem("jwt");
@@ -46,6 +77,8 @@ export default {
 
     return {
       boats,
+      newBoat,
+      addBoat,
     };
   },
 };
