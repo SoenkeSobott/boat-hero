@@ -18,24 +18,24 @@
 <script>
 import { ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Login",
   setup() {
     const credentials = ref({ username: "", password: "" });
+    const router = useRouter();
 
     const login = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/login",
+          "https://boat-service.azurewebsites.net/api/login",
           credentials.value
         );
         if (response.status === 200 && response.data) {
-          // Store the token. In production, consider using a more secure way to store tokens.
           localStorage.setItem("jwt", response.data.token);
-          // Redirect to home page or other place
+          router.push("/boats"); // Navigate to BoatsPage
         } else {
-          // Handle error
           console.log("Error logging in");
         }
       } catch (error) {
@@ -47,3 +47,4 @@ export default {
   },
 };
 </script>
+

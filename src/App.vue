@@ -12,9 +12,7 @@ import Login from "./components/Login.vue";
       height="125"
     />
   </header>
-  <main>
-    <Login />
-  </main>
+  <router-view></router-view>
 </template>
 
 <style scoped>
