@@ -11,6 +11,21 @@
       <button type="submit">Add Boat</button>
     </form>
 
+    <!-- Boat editing form -->
+    <form v-if="selectedBoat" @submit.prevent="updateBoat">
+      <label for="edit-name">Name</label>
+      <input id="edit-name" v-model="selectedBoat.name" required />
+
+      <label for="edit-description">Description</label>
+      <input
+        id="edit-description"
+        v-model="selectedBoat.description"
+        required
+      />
+
+      <button type="submit">Update Boat</button>
+    </form>
+
     <!-- Boat listing -->
     <table class="table">
       <thead>
@@ -22,12 +37,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="boat in boats" :key="boat.id">
+        <tr v-for="boat in boats" :key="boat.id" @click="selectedBoat = boat">
           <td>{{ boat.id }}</td>
           <td>{{ boat.name }}</td>
           <td>{{ boat.description }}</td>
           <td>
-            <button @click="deleteBoat(boat)">Delete</button>
+            <button @click.stop="deleteBoat(boat)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -45,6 +60,26 @@ export default {
     const router = useRouter();
     const boats = ref([]);
     const newBoat = reactive({ name: "", description: "" });
+    const selectedBoat = ref(null);
+
+    onMounted(async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        try {
+          const response = await axios.get(
+            "https://boat-service.azurewebsites.net/api/boats",
+            {
+              headers: { Authorization: `Bearer ${jwt}` },
+            }
+          );
+          boats.value = response.data;
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        router.push("/");
+      }
+    });
 
     const addBoat = async () => {
       const jwt = localStorage.getItem("jwt");
@@ -66,24 +101,23 @@ export default {
       }
     };
 
-    onMounted(async () => {
+    const updateBoat = async () => {
       const jwt = localStorage.getItem("jwt");
-      if (jwt) {
+      if (jwt && selectedBoat.value) {
         try {
-          const response = await axios.get(
-            "https://boat-service.azurewebsites.net/api/boats",
+          await axios.put(
+            `https://boat-service.azurewebsites.net/api/boats/${selectedBoat.value.id}`,
+            selectedBoat.value,
             {
               headers: { Authorization: `Bearer ${jwt}` },
             }
           );
-          boats.value = response.data;
+          selectedBoat.value = null;
         } catch (err) {
           console.error(err);
         }
-      } else {
-        router.push("/");
       }
-    });
+    };
 
     const deleteBoat = async (boat) => {
       const jwt = localStorage.getItem("jwt");
@@ -106,7 +140,9 @@ export default {
     return {
       boats,
       newBoat,
+      selectedBoat,
       addBoat,
+      updateBoat,
       deleteBoat,
     };
   },
