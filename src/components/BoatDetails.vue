@@ -2,12 +2,14 @@
   <div class="container">
     <button @click="goBack" class="back-button">Back to Overview</button>
     <h1>Boat Details</h1>
+    <!-- TODO: Add loading state when the data is being fetched -->
     <div v-if="boat" class="boat-details">
       <p><strong>ID:</strong> {{ boat.id }}</p>
       <p><strong>Name:</strong> {{ boat.name }}</p>
       <p><strong>Description:</strong> {{ boat.description }}</p>
     </div>
 
+    <!-- TODO: Add form validation to prevent empty fields or invalid inputs -->
     <form @submit.prevent="updateBoat" class="boat-form" v-if="boat">
       <h2>Edit Selected Boat</h2>
       <input v-model="boat.name" type="text" placeholder="Boat Name" />
@@ -22,17 +24,9 @@
 </template>
 
 <script>
-import { ref, onBeforeMount, watch } from "vue";
-import axios from "axios";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-
-const authenticate = (router) => {
-  const jwt = localStorage.getItem("jwt");
-  if (!jwt) {
-    router.push("/");
-  }
-  return jwt;
-};
+import api from "@/api.js";
 
 const handleError = (err, router) => {
   console.error(err);
@@ -48,36 +42,20 @@ export default {
     const boat = ref(null);
 
     const fetchBoat = async () => {
-      const jwt = authenticate(router);
-      if (jwt) {
-        try {
-          const response = await axios.get(
-            `https://boat-service.azurewebsites.net/api/boats/${props.id}`,
-            {
-              headers: { Authorization: `Bearer ${jwt}` },
-            }
-          );
-          boat.value = response.data;
-        } catch (err) {
-          handleError(err, router);
-        }
+      try {
+        const response = await api.get(`/boats/${props.id}`);
+        boat.value = response.data;
+      } catch (err) {
+        handleError(err, router);
       }
     };
 
     const updateBoat = async () => {
-      const jwt = authenticate(router);
-      if (jwt) {
-        try {
-          await axios.put(
-            `https://boat-service.azurewebsites.net/api/boats/${boat.value.id}`,
-            boat.value,
-            {
-              headers: { Authorization: `Bearer ${jwt}` },
-            }
-          );
-        } catch (err) {
-          handleError(err, router);
-        }
+      // TODO: Handle updating status and success/error messages for better UX
+      try {
+        await api.put(`/boats/${boat.value.id}`, boat.value);
+      } catch (err) {
+        handleError(err, router);
       }
     };
 
@@ -125,6 +103,7 @@ export default {
 }
 
 .boat-form input {
+  /* TODO: Consider adding CSS for error state (e.g. border-color: red)*/
   margin-bottom: 10px;
   padding: 10px;
   width: 100%;

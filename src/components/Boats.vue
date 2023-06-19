@@ -4,6 +4,7 @@
     <add-boat @boat-added="fetchBoats()"></add-boat>
 
     <!-- Boat listing -->
+    <!-- TODO: Consider adding a loading spinner or message while the boats data is being fetched. -->
     <table class="table">
       <thead>
         <tr>
@@ -14,11 +15,13 @@
         </tr>
       </thead>
       <tbody>
+        <!-- TODO: Consider adding a message for when there are no boats to display. -->
         <tr v-for="boat in boats" :key="boat.id" @click="goToDetails(boat.id)">
           <td>{{ boat.id }}</td>
           <td>{{ boat.name }}</td>
           <td>{{ boat.description }}</td>
           <td>
+            <!-- TODO: Consider adding a confirmation dialog before the deletion of a boat. -->
             <button @click.stop="deleteBoat(boat)">Delete</button>
           </td>
         </tr>
@@ -29,9 +32,9 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import axios from "axios";
 import { useRouter } from "vue-router";
 import AddBoat from "./AddBoat.vue";
+import api from "@/api.js";
 
 export default {
   components: {
@@ -41,13 +44,6 @@ export default {
     const router = useRouter();
     const boats = ref([]);
 
-    // Create an axios instance with common options
-    const api = axios.create({
-      baseURL: "https://boat-service.azurewebsites.net/api",
-      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-    });
-
-    // Extract the fetchBoats function
     const fetchBoats = async () => {
       try {
         const response = await api.get("/boats");
@@ -57,7 +53,6 @@ export default {
       }
     };
 
-    // Call fetchBoats in onMounted
     onMounted(fetchBoats);
 
     const goToDetails = (id) => {
@@ -74,8 +69,8 @@ export default {
       }
     };
 
-    // Create a common error handler
     const handleError = (err) => {
+      // TODO: Consider showing error messages in the UI instead of just console.error and navigation.
       console.error(err);
       router.push("/");
     };
@@ -162,4 +157,6 @@ export default {
   border-radius: 5px;
   cursor: pointer;
 }
+
+/* TODO: Consider using CSS variables to make the theme easier to change. */
 </style>

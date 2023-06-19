@@ -14,13 +14,7 @@
 <script>
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
-
-// Create a default axios instance
-const api = axios.create({
-  baseURL: "https://boat-service.azurewebsites.net/api",
-  headers: { Authorization: `Bearer ${getJwtToken()}` },
-});
+import api from "@/api.js";
 
 export default {
   setup(_, { emit }) {
@@ -34,6 +28,7 @@ export default {
         newBoat.description = "";
         emit("boat-added");
       } catch (err) {
+        // TODO: Improve error handling, maybe show a message to the user
         handleError(err);
       }
     };
@@ -46,11 +41,13 @@ function getJwtToken() {
   try {
     return localStorage.getItem("jwt");
   } catch (err) {
+    // TODO: Add better error handling for case where getting JWT fails
     handleError(err);
   }
 }
 
 function handleError(err) {
+  // TODO: Implement a more user-friendly way of handling errors, possibly with an error notification system
   console.error(err);
   router.push("/");
 }
@@ -77,6 +74,7 @@ function handleError(err) {
 }
 
 .boat-form button {
+  /* TODO: Consider moving common styles to a separate stylesheet to avoid duplication */
   background-color: #007bff;
   color: white;
   border: none;
@@ -85,4 +83,3 @@ function handleError(err) {
   cursor: pointer;
 }
 </style>
-

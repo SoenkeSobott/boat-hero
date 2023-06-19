@@ -11,6 +11,14 @@
 </template>
 
 <script>
+// TODO: Implement more robust error handling. Redirecting to the root page
+// on every error might not be the best user experience.
+
+// TODO: In order to make this truly production-ready, consider using a UI library
+// such as Vuetify or Quasar for pre-built, fully-featured components.
+
+// TODO: Consider using a more complete state management solution like Vuex.
+
 import { useAuth } from "@/authStore.js";
 import { useRouter } from "vue-router";
 
@@ -31,6 +39,12 @@ export default {
 </script>
 
 <style scoped>
+/* TODO: Consider using a CSS preprocessor like SCSS or LESS for more
+   advanced styling capabilities such as variables and mixins.
+
+   TODO: Extract common styles to a separate file and import where necessary
+   to maintain DRY (Don't Repeat Yourself) principle.*/
+
 .header {
   display: flex;
   justify-content: space-between;

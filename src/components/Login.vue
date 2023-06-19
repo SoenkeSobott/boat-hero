@@ -1,9 +1,11 @@
 <template>
+  <!-- TODO: Add server-side validation error messages -->
   <div class="container">
     <h2>Login</h2>
     <form @submit.prevent="attemptLogin" class="login-form">
       <div class="input-group">
         <label>Username:</label>
+        <!-- TODO: Add client-side validation -->
         <input
           v-model="credentials.username"
           type="text"
@@ -13,6 +15,7 @@
       </div>
       <div class="input-group">
         <label>Password:</label>
+        <!-- TODO: Add client-side validation -->
         <input
           v-model="credentials.password"
           type="password"
@@ -20,6 +23,7 @@
           class="input-field"
         />
       </div>
+      <!-- TODO: Disable button during login process -->
       <button type="submit" class="submit-button">Login</button>
     </form>
   </div>
@@ -49,9 +53,11 @@ export default {
           router.push("/boats");
         } else {
           console.log("Error logging in");
+          // TODO: Display login error message to user
         }
       } catch (error) {
         console.log(error);
+        // TODO: Handle different types of errors (network, server, validation, etc.) appropriately
       }
     };
 
@@ -61,6 +67,8 @@ export default {
 </script>
 
 <style scoped>
+/* TODO: Consider using a CSS preprocessor like SCSS or LESS to make styling more maintainable */
+
 .container {
   width: 80%;
   margin: auto;
@@ -97,4 +105,3 @@ export default {
   margin-top: 10px;
 }
 </style>
-
