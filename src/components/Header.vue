@@ -2,35 +2,29 @@
   <header class="header">
     <h1 class="title">Boat Hero</h1>
     <div class="auth-section">
-      <button v-if="!isAuthenticated" @click="goToLogin" class="auth-button">
-        Login
+      <button v-if="isAuthenticated" @click="logout" class="auth-button">
+        Logout
       </button>
-      <button v-else @click="logout" class="auth-button">Logout</button>
     </div>
   </header>
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { useAuth } from "@/authStore.js";
 import { useRouter } from "vue-router";
 
 export default {
   name: "Header",
   setup() {
     const router = useRouter();
+    const { isAuthenticated, logout } = useAuth();
 
-    const isAuthenticated = computed(() => !!localStorage.getItem("jwt"));
-
-    const goToLogin = () => {
+    const performLogout = () => {
+      logout();
       router.push("/");
     };
 
-    const logout = () => {
-      localStorage.removeItem("jwt");
-      router.push("/");
-    };
-
-    return { isAuthenticated, goToLogin, logout };
+    return { isAuthenticated, logout: performLogout };
   },
 };
 </script>
@@ -51,10 +45,6 @@ export default {
 .auth-section {
   display: flex;
   align-items: center;
-}
-
-.username {
-  margin-right: 20px;
 }
 
 .auth-button {

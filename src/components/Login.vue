@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h2>Login</h2>
-    <form @submit.prevent="login" class="login-form">
+    <form @submit.prevent="attemptLogin" class="login-form">
       <div class="input-group">
         <label>Username:</label>
         <input
@@ -29,22 +29,24 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { useAuth } from "@/authStore.js";
 
 export default {
   name: "Login",
   setup() {
     const credentials = ref({ username: "", password: "" });
     const router = useRouter();
+    const { login } = useAuth();
 
-    const login = async () => {
+    const attemptLogin = async () => {
       try {
         const response = await axios.post(
           "https://boat-service.azurewebsites.net/api/login",
           credentials.value
         );
         if (response.status === 200 && response.data) {
-          localStorage.setItem("jwt", response.data.token);
-          router.push("/boats"); // Navigate to BoatsPage
+          login(response.data.token);
+          router.push("/boats");
         } else {
           console.log("Error logging in");
         }
@@ -53,7 +55,7 @@ export default {
       }
     };
 
-    return { credentials, login };
+    return { credentials, attemptLogin };
   },
 };
 </script>

@@ -33,12 +33,6 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import AddBoat from "./AddBoat.vue";
 
-// Create an axios instance with common options
-const api = axios.create({
-  baseURL: "https://boat-service.azurewebsites.net/api",
-  headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-});
-
 export default {
   components: {
     AddBoat,
@@ -46,6 +40,12 @@ export default {
   setup() {
     const router = useRouter();
     const boats = ref([]);
+
+    // Create an axios instance with common options
+    const api = axios.create({
+      baseURL: "https://boat-service.azurewebsites.net/api",
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+    });
 
     // Extract the fetchBoats function
     const fetchBoats = async () => {
