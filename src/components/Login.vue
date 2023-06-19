@@ -45,7 +45,7 @@ export default {
           credentials.value
         );
         if (response.status === 200 && response.data) {
-          login(response.data.token);
+          login(response.data.token, credentials.value.username);
           router.push("/boats");
         } else {
           console.log("Error logging in");

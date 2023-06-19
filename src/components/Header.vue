@@ -1,6 +1,7 @@
 <template>
   <header class="header">
     <h1 class="title">Boat Hero</h1>
+    <h3 v-if="username">{{ username }}</h3>
     <div class="auth-section">
       <button v-if="isAuthenticated" @click="logout" class="auth-button">
         Logout
@@ -17,14 +18,14 @@ export default {
   name: "Header",
   setup() {
     const router = useRouter();
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated, username, logout } = useAuth();
 
     const performLogout = () => {
       logout();
       router.push("/");
     };
 
-    return { isAuthenticated, logout: performLogout };
+    return { isAuthenticated, username, logout: performLogout };
   },
 };
 </script>
